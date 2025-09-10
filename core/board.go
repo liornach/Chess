@@ -44,8 +44,16 @@ const MaxRank = 8
 
 type Square int
 
+func beginSquare() Square {
+	return newSquare(1, a)
+}
+
+func endSquare() Square {
+	return newSquare(8, MaxFile)
+}
+
 func newSquare(rank int, file File) Square {
-	return (Square)(rank * 8 + (int)(file))
+	return (Square)((rank - 1) * 8 + (int)(file))
 }
 
 func (s Square) File() File {
@@ -104,4 +112,9 @@ func (b *Board) Set(p Piece, s Square) error {
 
 	b.board[s] = p
 	return nil
+}
+
+func (b Board) At(a Square) (Piece, bool) {
+	p, ok := b.board[a]
+	return p, ok
 }
