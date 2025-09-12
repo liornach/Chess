@@ -1,6 +1,4 @@
-package core
-
-// C:\Users\Lias1225\sources\go\bin 
+package board
 
 type PieceType int
 
@@ -15,6 +13,7 @@ const (
 )
 
 type Color int
+
 const (
 	NoColor Color = iota
 	Black
@@ -22,71 +21,39 @@ const (
 )
 
 type Piece struct {
-	pieceType PieceType
-	color Color
-}
-
-type File int
-const (
-	a File = iota
-	b
-	c
-	d
-	e
-	f
-	g
-	h
-	MaxFile
-)
-
-const MinRank = 1
-const MaxRank = 8
-
-type Square int
-
-func beginSquare() Square {
-	return newSquare(1, a)
-}
-
-func endSquare() Square {
-	return newSquare(8, MaxFile)
-}
-
-func newSquare(rank int, file File) Square {
-	return (Square)((rank - 1) * 8 + (int)(file))
-}
-
-func (s Square) File() File {
-	return (File)(s % 8)
-}
-
-func (s Square) Rank() int {
-	return (int)(s / 8)
+	Type PieceType
+	Color     Color
 }
 
 type Board struct {
 	board map[Square]Piece
 }
 
-type squareOccupiedError struct {
+func NewBoard() Board {
+	return Board{
+		board: make(map[Square]Piece),
+	}
 }
 
-func (e squareOccupiedError) Error() string {
+type SquareOccupiedError struct {
+}
+
+func (e SquareOccupiedError) Error() string {
 	return "sqaure is already occupied"
 }
 
-type noPieceAtSquareError struct {
+type NoPieceAtSquareError struct {
 }
 
-func (e noPieceAtSquareError) Error() string {
+func (e NoPieceAtSquareError) Error() string {
 	return "no piece in this square"
 }
 
 func (b *Board) Move(from, to Square) error {
 	if _, ok := b.board[to]; ok {
-		return squareOccupiedError{}
+		return SquareOccupiedError{}
 	}
-	
+
 	if p, err := b.Take(from); err != nil {
 		return err
 	} else {
@@ -98,7 +65,7 @@ func (b *Board) Move(from, to Square) error {
 
 func (b *Board) Take(from Square) (Piece, error) {
 	if p, ok := b.board[from]; !ok {
-		return Piece{}, noPieceAtSquareError{}
+		return Piece{}, NoPieceAtSquareError{}
 	} else {
 		delete(b.board, from)
 		return p, nil
@@ -107,7 +74,7 @@ func (b *Board) Take(from Square) (Piece, error) {
 
 func (b *Board) Set(p Piece, s Square) error {
 	if _, ok := b.board[s]; ok {
-		return squareOccupiedError{}
+		return SquareOccupiedError{}
 	}
 
 	b.board[s] = p
