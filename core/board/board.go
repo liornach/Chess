@@ -3,13 +3,12 @@ package board
 type PieceType int
 
 const (
-	NoPiece PieceType = iota
-	King
-	Queen
-	Rook
+	Pawn PieceType = iota
 	Knight
 	Bishop
-	Pawn
+	Rook
+	Queen
+	King 
 )
 
 type Color int
@@ -35,11 +34,28 @@ func NewBoard() Board {
 	}
 }
 
+
+func (b Board) IsOccupied(s Square) bool {
+	_, ok := b.board[s]
+	return ok
+}
+
+
 type SquareOccupiedError struct {
 }
 
 func (e SquareOccupiedError) Error() string {
 	return "sqaure is already occupied"
+}
+
+
+func (b *Board) Set(p Piece, s Square) error {
+	if b.IsOccupied(s) {
+		return SquareOccupiedError{}
+	}
+
+	b.board[s] = p
+	return nil
 }
 
 type NoPieceAtSquareError struct {
@@ -49,8 +65,17 @@ func (e NoPieceAtSquareError) Error() string {
 	return "no piece in this square"
 }
 
+func (b *Board) Take(from Square) (Piece, error) {
+	if p, ok := b.board[from]; !ok {
+		return Piece{}, NoPieceAtSquareError{}
+	} else {
+		delete(b.board, from)
+		return p, nil
+	}
+}
+
 func (b *Board) Move(from, to Square) error {
-	if _, ok := b.board[to]; ok {
+	if b.IsOccupied(to) {
 		return SquareOccupiedError{}
 	}
 
@@ -63,25 +88,25 @@ func (b *Board) Move(from, to Square) error {
 	return nil
 }
 
-func (b *Board) Take(from Square) (Piece, error) {
-	if p, ok := b.board[from]; !ok {
-		return Piece{}, NoPieceAtSquareError{}
-	} else {
-		delete(b.board, from)
-		return p, nil
-	}
-}
-
-func (b *Board) Set(p Piece, s Square) error {
-	if _, ok := b.board[s]; ok {
-		return SquareOccupiedError{}
-	}
-
-	b.board[s] = p
-	return nil
-}
-
 func (b Board) At(a Square) (Piece, bool) {
 	p, ok := b.board[a]
 	return p, ok
+}
+
+type Iterator struct {
+	Square Square
+	Piece Piece
+}
+
+func (b Board) Iterate() <-chan *Iterator {
+	c := make(chan *Iterator)
+
+	go func () {
+		defer close(c)
+		for square, piece := range b.board {
+			c <- &Iterator{Square: square, Piece: piece}
+		}
+	}()
+
+	return c
 }

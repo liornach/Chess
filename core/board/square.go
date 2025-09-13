@@ -3,8 +3,7 @@ package board
 type File int
 
 const (
-	BeginFile = a
-	a File = iota
+	a File = iota + 1
 	b
 	c
 	d
@@ -12,60 +11,74 @@ const (
 	f
 	g
 	h
-	MaxFile = h
-	EndFile
 )
 
 type Rank int
-const BeginRank Rank = 1
-const MaxRank = 8
-const EndRank = 9
 
 type Square struct {
 	File File
 	Rank Rank
 }
 
-func (s *Square) Next() {
-        s.panicIfInvalid()
-	s.panicIfEnd()
-	
-	if s.File == MaxFile {
-		if s.Rank == MaxRank {
-			*s = EndSquare()
-		} else {
-			s.File = BeginFile
-			s.Rank++
-		}
-
-		return
-	}
-
-	s.File++
-}
-
-func BeginSqaure() Square {
-	return Square{
-		File: BeginFile,
-		Rank: BeginRank,
-	}
-}
-
-func EndSquare() Square {
-	return Square{
-		File: EndFile,
-		Rank : EndRank,
-	}
-}
-
-func (s Square) panicIfInvalid() {
-        if s.File < BeginFile || s.File > EndFile || s.Rank < BeginRank || s.Rank > EndRank {
-                panic("invalid square")
+func (s Square) Next() (Square, error) {
+	intSquare, err  := s.toInt()
+        if err != nil {
+                return Square{}, err
         }
+
+        return fromInt(intSquare + 1)
 }
 
-func (s Square) panicIfEnd() {
-	if s == EndSquare() {
-		panic("end square assertion failed")
-	}
+func fromInt(i int) (Square, error) {
+        if err := assert(i); err != nil {
+                return Square{}, err
+        }
+
+        file := (i - 1 ) & (8 - 1) + 1
+        rank := (i - 1) / 8 + 1
+        return Square{
+                File: File(file),
+                Rank: Rank(rank),
+        }, nil
+}
+
+func (s Square) toInt() (int, error) {
+        const FILES_PER_RANK int = 8
+        res := int(s.File) + int(s.Rank - 1) * FILES_PER_RANK
+        return res, assert(res)
+}
+
+func lastSquareInt() int {
+        const SQUARES int = 64
+        return SQUARES
+}
+
+func firstSquareInt() int {
+        const FIRST_SQUARE int = 1
+        return FIRST_SQUARE
+}
+
+func FirstSquare() Square {
+        first, _ := fromInt(firstSquareInt())
+        return first
+}
+
+func LastSquare() Square {
+        last, _ := fromInt(lastSquareInt())
+        return last
+}
+
+type InvalidSquareError struct{
+}
+
+func (e InvalidSquareError) Error() string {
+        return "invalid square"
+}
+
+func assert(i int) error {
+        if i < firstSquareInt() || i > lastSquareInt() {
+                return InvalidSquareError{}
+        }
+
+        return nil
 }

@@ -2,72 +2,57 @@ package board
 
 import "testing"
 
-func TestBeginSquare(t *testing.T) {
-	bs := BeginSqaure()
-	if bs.File != BeginFile || bs.Rank != BeginRank {
-		t.Errorf("failed to generate begin square")
+func TestAssert(t *testing.T) {
+        valid := 25
+        if err := assert(valid); err != nil {
+                t.Errorf("failed on valid assertion")
+        }
+
+        invalid := -1
+        if err := assert(invalid); err == nil {
+                t.Errorf("failed on invalid assertion")
+        } 
+
+        invalid = 65
+        if err := assert(invalid); err == nil {
+                t.Errorf("failed on invalid assertion")
+        }
+}
+
+func TestFirstSquare(t *testing.T) {
+	bs := FirstSquare()
+	if bs.File != a || bs.Rank != Rank(1) {
+		t.Errorf("failed to generate first square")
 	}
 }
 
-func TestEndSquare(t *testing.T) {
-	bs := EndSquare()
-	if bs.File != EndFile || bs.Rank != EndRank {
-		t.Errorf("failed to generated end square")
+func TestLastSquare(t *testing.T) {
+	bs := LastSquare()
+	if bs.File != h || bs.Rank != Rank(8) {
+		t.Errorf("failed to generated last square")
 	}
 }
 
-func TestPanicIfEndShouldNotPanic(t *testing.T) {
-	notEnd := Square{
-		File:b,
-		Rank: 3,
-	}
 
-	defer func() {
-		if r := recover(); r != nil {
-			t.Errorf("panic at end but it shouldnt")
-		}
-	}()
-
-	notEnd.panicIfEnd()
-}
-
-func TestPanicIfEndShouldPanic(t *testing.T) {
-	end := EndSquare()
-
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("did not panic at end but it should have")
-		}
-	}()
-
-	end.panicIfEnd()
-}
-
-func TestNextNonEnd(t *testing.T) {
+func TestValidNext(t *testing.T) {
 	s := Square{
 		File: h,
 		Rank: 3,
 	}
 
-        s.Next()
-        if s.File != a || s.Rank != 4 {
+        var err error 
+        if s, err = s.Next(); err != nil || s.File != a || s.Rank != 4 {
                 t.Errorf("failed in next")
         }
 
-        s.Next()
-        if s.File != b || s.Rank != 4 {
+        if s, err = s.Next(); err != nil || s.File != b || s.Rank != 4 {
                 t.Errorf("failed in next")
         }
 }
 
-func TestNextEnd(t *testing.T) {
-        s := Square{
-                File: MaxFile,
-                Rank: MaxRank,
-        }
-
-        s.Next()
-        if s != EndSquare() {
-                t.Errorf("failed in next end")
+func TestInvalidNext(t *testing.T) {
+        s := LastSquare()
+        if _, err := s.Next(); err == nil {
+                t.Errorf("failed in next")
         }
 }
