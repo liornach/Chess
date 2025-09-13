@@ -1,6 +1,9 @@
 package board
 
-import "testing"
+import (
+        "testing"
+        "slices"
+)
 
 func TestNewBoard(t *testing.T) {
 	b := NewBoard()
@@ -112,6 +115,35 @@ func TestAt(t *testing.T) {
         if _, ok := b.At(s); ok {
                 t.Errorf("faield in At")
         }
+}
+
+func TestIterate(t *testing.T) {
+        wb := Piece{Type: Bishop, Color: White}
+        wbs, _ := nthSquare(53)
+
+        bk := Piece{Type:King, Color: Black}
+        bks, _ := nthSquare(20)
+
+        b := NewBoard()
+        b.board[wbs] = wb
+        b.board[bks] = bk
+
+        var iters []Iterator
+        for it := range b.Iterate() {
+                iters = append(iters, *it)
+        }
+
+        if len(iters) != 2 {
+                t.Errorf("failed in iterate")
+        }
+
+        if !slices.Contains(iters, Iterator{Square: wbs, Piece: wb}) {
+                t.Errorf("failed in iterate")
+        }
+
+        if !slices.Contains(iters, Iterator{Square: bks, Piece: bk}) {
+                t.Errorf("failed in iterate")
+        }        
 }
 
 func nthSquare(n uint) (Square, error) {
