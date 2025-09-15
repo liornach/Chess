@@ -4,8 +4,8 @@ type PieceType byte
 
 
 const (
-    NoPiece PieceType = 0b0
-	Pawn PieceType = iota + 4
+    NoPiece PieceType = iota
+	Pawn
 	Knight
 	Bishop
 	Rook
@@ -22,12 +22,9 @@ func (pt PieceType) validate() error {
 	case Rook:
 	case Queen:
 	case King:
-		return nil
+	default:
+		return UnknownPieceTypeError{}
 	}
 
-	return UnknownPieceTypeError{}
-}
-
-func typeMask() byte {
-	return 0b1100
+	return nil
 }

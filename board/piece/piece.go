@@ -2,7 +2,8 @@ package piece
 
 
 type Piece struct {
-	data byte
+	ptype PieceType
+	color Color
 }
 
 func NewPiece(c Color, t PieceType) (Piece, error) {
@@ -14,17 +15,13 @@ func NewPiece(c Color, t PieceType) (Piece, error) {
 		return Piece{}, err
 	}
 
-
-	var cbyte byte = byte(c)
-	var tbyte byte = byte(t)
-	var data byte = cbyte | tbyte
-	return Piece{ data: data }, nil
+	return Piece{ ptype : t, color : c }, nil
 }
 
 func (p Piece) Color() Color {
-	return Color(p.data & colorMask())
+	return Color(p.color)
 }
 
 func (p Piece) Type() PieceType {
-	return PieceType(p.data & typeMask())
+	return PieceType(p.ptype)
 }

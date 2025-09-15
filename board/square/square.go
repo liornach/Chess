@@ -1,30 +1,13 @@
-package board
+package square
 
 type File byte
 
-const (
-	a File = iota + 9
-	b
-	c
-	d
-	e
-	f
-	g
-	h
-)
-
-
-type Rank byte
-const (
-	FirstRank Rank = 1
-	LastRank 8
-)
-
 type Square struct {
-	data byte
+	rank int
+        file byte
 }
 
-func NewSquare(f File, r Rank) {
+func NewSquare(r int, f byte) {
 	if f < a || f > h {
 		panic("invalid file")
 	}
