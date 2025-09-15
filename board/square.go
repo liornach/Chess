@@ -1,9 +1,9 @@
 package board
 
-type File int
+type File byte
 
 const (
-	a File = iota + 1
+	a File = iota + 9
 	b
 	c
 	d
@@ -13,21 +13,40 @@ const (
 	h
 )
 
-type Rank int
+
+type Rank byte
+const (
+	FirstRank Rank = 1
+	LastRank 8
+)
 
 type Square struct {
-	File File
-	Rank Rank
+	data byte
 }
 
-func (s Square) Next() (Square, error) {
-	intSquare, err  := s.toInt()
-        if err != nil {
-                return Square{}, err
-        }
+func NewSquare(f File, r Rank) {
+	if f < a || f > h {
+		panic("invalid file")
+	}
 
-        return fromInt(intSquare + 1)
+	if r < FirstRank || r > LastRank {
+		panic("invalid rank")
+	}
+
+	return Square {
+		data: byte(r) | byte(f)
+	}
 }
+
+//func (s Square) Next() (Square, error) {
+//	intSquare, err  := s.toInt()
+//        if err != nil {
+//                return Square{}, err
+//        }
+//
+//        return fromInt(intSquare + 1)
+//}
+//
 
 func fromInt(i int) (Square, error) {
         if err := assert(i); err != nil {

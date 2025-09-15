@@ -1,44 +1,18 @@
 package board
 
-type PieceType int
-
-const (
-        NoPiece PieceType = iota
-	Pawn
-	Knight
-	Bishop
-	Rook
-	Queen
-	King 
-)
-
-type Color int
-
-const (
-	NoColor Color = iota
-	Black
-	White
-)
-
-type Piece struct {
-	Type PieceType
-	Color     Color
-}
+const SQUARES uint = 64
 
 type Board struct {
-	board map[Square]Piece
+	board [SQUARES]Piece
 }
 
 func NewBoard() Board {
-	return Board{
-		board: make(map[Square]Piece),
-	}
+	return Board{}
 }
 
 
 func (b Board) IsOccupied(s Square) bool {
-	_, ok := b.board[s]
-	return ok
+	return b.board[s.toInt()].Type() != NoPiece
 }
 
 

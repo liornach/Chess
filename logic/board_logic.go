@@ -1,5 +1,7 @@
 package core
 
+//import "example.com/chess/board"
+
 type BoardState struct {
 	board board
 	turn  Color
@@ -63,12 +65,13 @@ func (e PieceNotFoundError) Error() string {
 }
 
 func (b *BoardState) FindKing(c Color) (Square, error) {
-	for s := beginSquare(); s != endSquare(); s++ {
-		if p, ok := b.board.At(s); ok && p.pieceType == King && p.color == c {
-			return s, nil
+	king := Piece{ Type: King, Color : c}
+
+	for iter := range b.board.Iterate() {
+		if iter.Piece == king {
+			return iter.Square, nil
 		}
 	}
 
-	var s Square
-	return s, PieceNotFoundError{}
+	return Square{}, PieceNotFoundError{}
 }
