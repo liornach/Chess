@@ -1,6 +1,9 @@
 package board
 
+import "piece"
+
 const SQUARES uint = 64
+type Square = int
 
 type Board struct {
 	board [SQUARES]Piece
@@ -12,7 +15,7 @@ func NewBoard() Board {
 
 
 func (b Board) IsOccupied(s Square) bool {
-	return b.board[s.toInt()].Type() != NoPiece
+	return b.board[s].Type() != NoPiece
 }
 
 
@@ -41,31 +44,43 @@ func (e NoPieceAtSquareError) Error() string {
 }
 
 func (b *Board) Take(from Square) (Piece, error) {
-	if p, ok := b.board[from]; !ok {
-		return Piece{}, NoPieceAtSquareError{}
-	} else {
-		delete(b.board, from)
-		return p, nil
+	if !IsOccupied(from) {
+		return piece.EmptyPiece(), NoPieceAtSquareError{}
 	}
+
+	b.board[from] = piece.EmptyPiece()
+	return p, nil
 }
 
 func (b *Board) Move(from, to Square) error {
-	if b.IsOccupied(to) {
-		return SquareOccupiedError{}
-	}
+	var err error = nil
+	var p Piece = piece.EmptyPiece()
 
-	if p, err := b.Take(from); err != nil {
+	defer func() {
+		if err.(SquareOccupiedError) {
+			if p == piece.EmptyPiece() {
+				panic("fatal error in move (empty piece)")
+			}
+
+			if b.Set(p, from) {
+				panic("fatal error in move (reset in previous square)")
+			}
+		}
+	}()
+
+	if p, err = b.Take(from); err != nil {
 		return err
-	} else {
-		b.board[to] = p
+	}
+		
+	if err = b.Set(p, to); err != nil {
+		return err;
 	}
 
 	return nil
 }
 
-func (b Board) At(a Square) (Piece, bool) {
-	p, ok := b.board[a]
-	return p, ok
+func (b Board) At(a Square) Piece {
+	return b.board[a]
 }
 
 type Iterator struct {
@@ -78,9 +93,9 @@ func (b Board) Iterate() <-chan *Iterator {
 
 	go func () {
 		defer close(c)
-		for square, piece := range b.board {
-			c <- &Iterator{Square: square, Piece: piece}
-		}
+		for i := 0; i < SQUARES; i++ [
+			c <- &Iterator{Square: i, Piece: b.At(i)}
+		]
 	}()
 
 	return c

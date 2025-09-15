@@ -25,3 +25,10 @@ func (p Piece) Color() Color {
 func (p Piece) Type() PieceType {
 	return PieceType(p.ptype)
 }
+
+func EmptyPiece() Piece {
+	return Piece{
+		ptype: NoPiece,
+		color: NoColor,
+	}
+}

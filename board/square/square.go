@@ -3,33 +3,26 @@ package square
 type File byte
 
 type Square struct {
-	rank int
-        file byte
+	rank Rank
+        file File
 }
 
-func NewSquare(r int, f byte) {
-	if f < a || f > h {
-		panic("invalid file")
-	}
+func NewSquare(r char, f int) (Square, error) {
+        file := File(f)
+        if err := file.validate(); err != nil {
+                return Square{}, err
+        }
 
-	if r < FirstRank || r > LastRank {
-		panic("invalid rank")
-	}
+        rank := Rank(r)
+        if err := rank.validate(); err != nil {
+                return Square{}, err
+        }
 
-	return Square {
-		data: byte(r) | byte(f)
+	return Square{
+		rank: rank,
+                file: file,
 	}
 }
-
-//func (s Square) Next() (Square, error) {
-//	intSquare, err  := s.toInt()
-//        if err != nil {
-//                return Square{}, err
-//        }
-//
-//        return fromInt(intSquare + 1)
-//}
-//
 
 func fromInt(i int) (Square, error) {
         if err := assert(i); err != nil {
@@ -44,7 +37,7 @@ func fromInt(i int) (Square, error) {
         }, nil
 }
 
-func (s Square) toInt() (int, error) {
+func (s Square) toUint() (int, error) {
         const FILES_PER_RANK int = 8
         res := int(s.File) + int(s.Rank - 1) * FILES_PER_RANK
         return res, assert(res)
