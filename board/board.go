@@ -2,7 +2,6 @@ package board
 
 import (
 	"example.com/chess/board/piece"
-	"example.com/chess/board/piece/factory"
 )
 
 type Piece = piece.Piece
