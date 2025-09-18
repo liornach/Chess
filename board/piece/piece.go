@@ -26,9 +26,6 @@ func (p Piece) Type() PieceType {
 	return PieceType(p.ptype)
 }
 
-func EmptyPiece() Piece {
-	return Piece{
-		ptype: NoPiece,
-		color: NoColor,
-	}
+func EmptyPiece() *Piece {
+	return nil
 }
