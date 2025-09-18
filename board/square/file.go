@@ -3,7 +3,7 @@ package square
 type File int
 
 func (f File) validate() error {
-	switch int(r) {
+	switch int(f) {
 	case 1:
 	case 2:
 	case 3:

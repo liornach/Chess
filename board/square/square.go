@@ -1,13 +1,11 @@
 package square
 
-type File byte
-
 type Square struct {
 	rank Rank
         file File
 }
 
-func NewSquare(r char, f int) (Square, error) {
+func NewSquare(r byte, f int) (Square, error) {
         file := File(f)
         if err := file.validate(); err != nil {
                 return Square{}, err
@@ -21,7 +19,7 @@ func NewSquare(r char, f int) (Square, error) {
 	return Square{
 		rank: rank,
                 file: file,
-	}
+	}, nil
 }
 
 func fromInt(i int) (Square, error) {
@@ -32,14 +30,14 @@ func fromInt(i int) (Square, error) {
         file := (i - 1 ) & (8 - 1) + 1
         rank := (i - 1) / 8 + 1
         return Square{
-                File: File(file),
-                Rank: Rank(rank),
+                rank: Rank(rank),
+                file: File(file),
         }, nil
 }
 
-func (s Square) toUint() (int, error) {
+func (s Square) ToUint() (int, error) {
         const FILES_PER_RANK int = 8
-        res := int(s.File) + int(s.Rank - 1) * FILES_PER_RANK
+        res := int(s.file) + int(s.rank - 1) * FILES_PER_RANK
         return res, assert(res)
 }
 
