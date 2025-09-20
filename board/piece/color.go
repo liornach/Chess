@@ -3,14 +3,16 @@ package piece
 type Color byte
 
 const (
-	NoColor Color = iota
-	Black
+	Black Color = iota
 	White
 )
 
+func EmptyColor() Color {
+	return Color(0b11111111)
+}
+
 func (c Color) validate() error {
 	switch c {
-	case NoColor:
 	case White:
 	case Black:
 	default:

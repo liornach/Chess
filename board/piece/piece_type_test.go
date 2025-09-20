@@ -50,14 +50,6 @@ func TestValidateRook(t *testing.T) {
 	}
 }
 
-func TestValidateNoPiece(t *testing.T) {
-	p := NoPiece
-	res := p.validate()
-	if res != nil {
-		t.Errorf("failed with err : %v", res.Error())
-	}
-}
-
 func TestValidatePieceExpectSomeError(t *testing.T) {
 	p := PieceType(0b11111111)
 	res := p.validate()

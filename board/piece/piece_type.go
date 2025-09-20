@@ -4,8 +4,7 @@ type PieceType byte
 
 
 const (
-    NoPiece PieceType = iota
-	Pawn
+	Pawn PieceType = iota
 	Knight
 	Bishop
 	Rook
@@ -15,7 +14,6 @@ const (
 
 func (pt PieceType) validate() error {
 	switch pt {
-	case NoPiece:
 	case Pawn:
 	case Knight:
 	case Bishop:
