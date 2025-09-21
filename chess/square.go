@@ -1,5 +1,93 @@
 package chess
 
+func up(i SquareIndex) (squareIdx, error) {
+	rank, file, err := indexToRankFile(i)
+	if err != nil {
+		return i,err
+	}
+
+	rank++
+	idx, err := rankFileToIndex(rank, file)
+	if err != nil {
+		return i, err
+	}
+
+	return idx, nil
+}
+
+func down(i squareIdx) (squareIdx, error) {
+	rank, file, err := indexToRankFile(i)
+	if err != nil {
+		return i, err
+	}
+
+	rank--
+	idx, err := rankFileToIndex(rank, file)
+	if err != nil {
+		return i, err
+	}
+
+	return idx, nil
+}
+
+func right(i squareIdx) (squareIdx, error) {
+	rank, file, err := indexToRankFile(i)
+	if err != nil {
+		return i, err
+	}
+
+	file++
+	idx, err := rankFileToIndex(rank, file)	
+	if err != nil {
+		return i, err
+	}
+
+	return idx, nil
+}
+
+func left(i squareIdx) (squareIdx, error) {
+	rank, file, err := indexToRankFile(i)
+	if err != nil {
+		return i, err
+	}
+
+	file--
+	idx, err := rankFileToIndex(rank, file)	
+	if err != nil {
+		return i, err
+	}
+
+	return idx, nil
+}
+
+func upRight(i squareIdx) (squareIdx, error) {
+	right, err := right(i)
+	if err != nil {
+		return i, err
+	}
+
+	upright, err := up(right)
+	if err != nil {
+		return i, err
+	}
+
+	return upright, nil
+}
+
+func upLeft(i squareIdx) (squareIdx, error) {
+	left, err := left(i)
+	if err != nil {
+		return i, err
+	}
+
+	upleft, err := up(left)
+	if err != nil {
+		return i, err
+	}
+
+	return upleft, nil
+}
+
 func rankFileToIndex(r rank, f file) (squareIdx, error) {
 	ridx, err := rankToIndex(r)
 	if err != nil {
@@ -22,8 +110,6 @@ func fileToIndex(f file) (squareIdx, error) {
 
 	return squareIdx(f - firstFile()), nil
 }
-
-
 
 func indexToFile(i squareIdx) (file, error) {
 	if err := assertSquareIndex(i); err != nil {

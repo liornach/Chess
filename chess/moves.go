@@ -37,5 +37,5 @@ func (b *board) Moves(i squareIdx) ([]squareIdx, error) {
 }
 
 func (b *board) isInDirectSightWithKing(i squareIdx) bool {
-
+	
 }
