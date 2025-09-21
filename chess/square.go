@@ -74,18 +74,46 @@ func upRight(i squareIdx) (squareIdx, error) {
 	return upright, nil
 }
 
+func downRight(i squareIdx) (squareIdx, error) {
+	right, err := right(i)
+	if err != nil {
+		return i, err
+	}
+
+	downRight, err := down(right)
+	if err != nil {
+		return i, err
+	}
+
+	return downRight, nil
+}
+
 func upLeft(i squareIdx) (squareIdx, error) {
-	left, err := left(i)
+	l, err := left(i)
 	if err != nil {
 		return i, err
 	}
 
-	upleft, err := up(left)
+	ul, err := up(l)
 	if err != nil {
 		return i, err
 	}
 
-	return upleft, nil
+	return ul, nil
+}
+
+func downLeft(i squareIdx) (squareIdx, error) {
+	l, err := left(i)
+	if err != nil {
+		return i, err
+	}
+
+	dl, err := down(l)
+	if err != nil {
+		return i, err
+	}
+
+	return dl, nil
 }
 
 func rankFileToIndex(r rank, f file) (squareIdx, error) {

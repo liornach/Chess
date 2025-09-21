@@ -1,5 +1,7 @@
 package chess
 
+type direction = string
+
 func (b *board) FindKing(c color) (squareIdx, bool, error) {
 	if err := assertColor(c); err != nil {
 		return invalidSquareIndex(), false, err
@@ -36,6 +38,12 @@ func (b *board) Moves(i squareIdx) ([]squareIdx, error) {
 
 }
 
-func (b *board) isInDirectSightWithKing(i squareIdx) bool {
-	
+func (b *board) isInDirectSightWithKing(i squareIdx) (bool, direction) {
+
 }
+
+func (b *board) nextPieceInDirection(i squareIdx, d direction) (piece, error) {
+
+}
+
+func 
