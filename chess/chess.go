@@ -1,17 +1,45 @@
 package chess
-
-import "errors"
+//C:\Users\Lias1225\sources\go\bin\go.exe
 
 const squares uint = 64
 
-type piece struct {
-	color string
-	kind string
-}
+
 
 type board [squares]piece
 type file = byte
 type rank = uint
+type squareIdx = int
+type color = string
+type kind = string
+
+type piece struct {
+	color color
+	kind kind
+}
+
+func invalidRank() rank {
+	return 0
+}
+
+func invalidFile() file {
+	return '\x00'
+}
+
+func invalidColor() color {
+	return ""
+}
+
+func invalidKind() kind {
+	return ""
+}
+
+func invalidPiece() piece {
+	return piece{color: invalidColor(), kind: invalidKind()}
+}
+
+func invalidSquareIndex() squareIdx {
+	return -1
+}
 
 func firstFile() file {
 	return 'a'
@@ -29,83 +57,40 @@ func lastRank() rank {
 	return 8
 }
 
-func (b board) Set(r rank, f file,p piece) {
-	assertFile(f)
-	assertRank(r)
-	idx := fileToIndex(f) + fileToIndex(r)
-	b[idx] = // here
+func firstSquareIdx() squareIdx {
+	return 0
 }
 
-func (b board) Get(r rank, f file) (piece, bool, error) {
-	fidx, err := fileToIndex(f)
-	if err != nil {
-		return 
-	}
+func lastSquareIdx() squareIdx {
+	return int(squares) - 1
+}
 
-	ridx, err := rankToIndex(r)
+func (b *board) Set(r rank, f file,p piece) error {
+	idx, err := rankFileToIndex(r, f)
 	if err != nil {
-
+		return err
 	}
-	idx := fileToIndex(f) + rankToIndex(r)
+	b[idx] = p
+	return nil
+}
+
+func (b *board) GetByRankFile(r rank, f file) (piece, bool, error) {
+	idx, err := rankFileToIndex(r, f)
+	if err != nil {
+		return invalidPiece(), false, err
+	}
 	p := b[idx]
 	exist := p != piece{}
-	return p, exist
+	return p, exist, nil
 }
 
-func rankFileToIndex(r rank, f file) (uint, error) {
-	ridx, err := rankToIndex(r)
-	if err != nil {
-		return -1, err
+func (b *board) AtIndex(i squareIdx) (piece, bool, error) {
+	if err := assertSquareIndex(i); err != nil {
+		return invalidPiece(), false, err
 	}
 
-	fidx, err := fileToIndex(f)
-	if err != nil {
-		return -1, err
-	}
-
-	ret := fidx + ridx
-	return ret, nil
+	p := b[i]
+	exist := p != piece{}
+	return b[i], exist, nil
 }
 
-func fileToIndex(f file) (uint, error) {
-	if err := assertFile(f); err != nil {
-		return -1, err
-	}
-
-	return uint(f - firstFile())
-}
-
-func rankToIndex(r rank) (uint, error) {
-	if err := assertRank(r); err != nil {
-		return -1, err
-	}
-	return r - 1 * 8
-}
-
-func assertRankFile(r rank, f file) error {
-	if err := assertRank(r); err != nil {
-		return err
-	}
-
-	if err := assertFile(f); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func assertFile(f file) error {
-	if f < firstFile() || f > lastFile() {
-		return FileOutOfRangeError{File: f}
-	}
-
-	return nil
-}
-
-func assertRank(r rank) error {
-	if r < firstRank() || r > lastRank() {
-		return RankOutOfRangeError{Rank :r}
-	}
-
-	return nil
-}
